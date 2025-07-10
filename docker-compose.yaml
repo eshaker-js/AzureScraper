@@ -1,0 +1,27 @@
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo-local
+    environment:
+      MONGO_INITDB_DATABASE: azure_scraper
+  
+  backend:
+    build:
+      context: ./backend
+    container_name: azure_backend
+    depends_on:
+      - mongo
+    ports:
+      - 8000:8000
+    environment:
+      MONGO_URI: "mongodb://mongo-local:27017/azure_scraper"
+      ALLOWED_ORIGINS: "http://localhost:5173,http://localhost"
+  
+  frontend:
+    build:
+      context: ./frontend
+    container_name: azure-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
