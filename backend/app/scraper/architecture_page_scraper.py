@@ -1,42 +1,62 @@
+import requests
 from bs4 import BeautifulSoup
-import httpx
-import asyncio
 
-BASE_URL = "https://learn.microsoft.com"
-TARGET_URL = f"{BASE_URL}/en-us/azure/architecture/browse/"
+def parse_architecture_page(url: str):
+    try:
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/134.0.0.0 Safari/537.36"
+            )
+        }
 
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
 
-async def scrape_index_page():
-    async with httpx.AsyncClient() as client:  # Start httpx client
+        soup = BeautifulSoup(response.text, "html.parser")
 
-        # response check
-        response = await client.get(TARGET_URL)
-        if response.status_code != 200:
-            raise Exception(f"Failed to fetch page: {response.status_code}")
+        # Title
+        title_tag = soup.find("h1")
+        title = title_tag.get_text(strip=True) if title_tag else "N/A"
 
-        soup = BeautifulSoup(response.text, "lxml")
-        print(soup)
-        # cards = soup.select("div.card")
+        # Main content container
+        content_div = soup.find("div", class_="content") or soup.find("div", class_="content-body")
+        if not content_div:
+            raise ValueError("Main content container not found.")
 
-        # results = []
-        # for card in cards:
-        #     link_tag = card.select_one("a")
-        #     title_tag = card.select_one("h3")
-        #     desc_tag = card.select_one("p")
+        # Capture all relevant content
+        valid_tags = ["h1", "h2", "h3", "h4", "p", "li"]
+        content_blocks = content_div.find_all(valid_tags)
 
-        #     if not link_tag or not title_tag:
-        #         continue
+        structured_content = []
+        for tag in content_blocks:
+            text = tag.get_text(strip=True)
+            if text and len(text.split()) > 3:  # avoid noise
+                structured_content.append(f"[{tag.name.upper()}] {text}")
 
-        #     results.append(
-        #         {
-        #             "title": title_tag.text.strip(),
-        #             "url": BASE_URL + link_tag["href"],
-        #             "description": desc_tag.text.strip() if desc_tag else "",
-        #         }
-        #     )
+        return {
+            "url": url,
+            "page_title": title,
+            "structured_content": structured_content
+        }
 
-        # return results
+    except Exception as e:
+        print(f"❌ Failed to parse {url}:\n   ↳ {e}")
+        return {}
 
+def main():
+    test_url = "https://learn.microsoft.com/en-us/azure/architecture/ai-ml/architecture/baseline-azure-ai-foundry-chat"
+    result = parse_architecture_page(test_url)
+
+    if result:
+        print(f"🔗 URL: {result['url']}")
+        print(f"🧠 Page Title: {result['page_title']}\n")
+        print("🧩 Structured Content Blocks:")
+        for block in result['structured_content'][:20]:  # Preview first 20
+            print(f"- {block}")
+    else:
+        print("No content extracted.")
 
 if __name__ == "__main__":
-    asyncio.run(scrape_index_page())
+    main()
