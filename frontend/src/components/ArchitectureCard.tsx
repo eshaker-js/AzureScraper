@@ -1,9 +1,10 @@
-import React from "react"
+// src/components/ArchitectureCard.tsx
+import React, { useState } from "react"
 import type { Architecture } from "../types/architecture"
 
 export interface ArchitectureCardProps {
   architecture: Architecture
-  baseUrl?: string  // e.g. "https://learn.microsoft.com"
+  baseUrl?: string // e.g. "https://learn.microsoft.com"
 }
 
 export const ArchitectureCard: React.FC<ArchitectureCardProps> = ({
@@ -19,6 +20,7 @@ export const ArchitectureCard: React.FC<ArchitectureCardProps> = ({
     display_products,
     url,
   } = architecture
+  const [open, setOpen] = useState(false)
 
   const date = new Date(fetched_at).toLocaleString()
   const thumbSrc = thumbnail_url.startsWith("http")
@@ -29,49 +31,92 @@ export const ArchitectureCard: React.FC<ArchitectureCardProps> = ({
   return (
     <a
       href={detailUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow overflow-hidden flex flex-col no-underline"
+      target='_blank'
+      rel='noopener noreferrer'
+      className='
+        group
+        bg-white
+        border
+        border-gray-100
+        rounded-2xl
+        shadow-sm
+        hover:shadow-md
+        transition
+        duration-200
+        overflow-hidden
+        flex
+        flex-col
+        no-underline
+      '
     >
-      {/* Thumbnail */}
-      <div className="h-48 w-full overflow-hidden">
+      {/* Thumbnail as a small inset */}
+      <div className='w-full h-32 overflow-hidden flex-shrink-0'>
         <img
           src={thumbSrc}
           alt={`Thumbnail for ${title}`}
-          className="object-cover w-full h-full"
+          className='w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300'
         />
       </div>
 
-      <div className="p-6 flex-1 flex flex-col">
-        {/* Title & Summary */}
-        <h3 className="text-2xl font-bold mb-2 text-gray-900">{title}</h3>
-        <p className="text-gray-700 mb-4 flex-1">{summary}</p>
+      <div className='p-5 flex-1 flex flex-col'>
+        {/* Title */}
+        <h3 className='text-xl font-semibold text-gray-900 mb-2 line-clamp-2'>
+          {title}
+        </h3>
 
-        {/* Products as tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        {/* Summary */}
+        <p className='text-gray-600 text-sm mb-4 line-clamp-3'>{summary}</p>
+
+        {/* Product tags: horizontal scroll if many */}
+        <div className='mb-4 flex space-x-2 overflow-x-auto pb-1'>
           {display_products.map((prod) => (
             <span
               key={prod}
-              className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full"
+              className='
+                flex-shrink-0
+                bg-blue-50
+                text-blue-700
+                text-xs
+                font-medium
+                px-2
+                py-1
+                rounded-full
+              '
             >
               {prod}
             </span>
           ))}
         </div>
 
-        {/* Use Cases */}
-        <div className="mb-4">
-          <h4 className="text-lg font-semibold mb-2 text-gray-800">Use Cases</h4>
-          <ul className="list-disc list-inside text-gray-600 space-y-1">
-            {useCases.map((uc, i) => (
-              <li key={i}>{uc}</li>
-            ))}
-          </ul>
-        </div>
+        {/* Use Cases toggle */}
+        {useCases.length > 0 && (
+          <div className='mb-4'>
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                setOpen((o) => !o)
+              }}
+              className='text-sm text-blue-600 hover:underline mb-2'
+            >
+              {open ? "Hide Use Cases" : "Show Use Cases"}
+            </button>
+
+            {open && (
+              <ul className='list-disc list-inside text-gray-600 space-y-1 text-sm'>
+                {useCases.map((uc, i) => (
+                  <li key={i}>{uc}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
 
         {/* Fetched at */}
-        <div className="text-xs text-gray-500 mt-auto">
-          Fetched: <time dateTime={fetched_at}>{date}</time>
+        <div className='mt-auto text-xs text-gray-400'>
+          Fetched:{" "}
+          <time dateTime={fetched_at} className='italic'>
+            {date}
+          </time>
         </div>
       </div>
     </a>
