@@ -3,7 +3,7 @@ import asyncio
 from httpx import AsyncClient
 from bs4 import BeautifulSoup
 from typing import List, Dict, Any
-
+import re
 from .architecture_finder import fetch_architecture_objects
 
 LEARN_BASE = "https://learn.microsoft.com/en-us"
@@ -15,15 +15,22 @@ async def extract_use_cases(html: str) -> List[str]:
         and "potential use cases" in t.get_text(strip=True).lower()
     )
     if not header:
-        return ["No official use case was scraped from the architecture's page"]
+        return []
 
     blocks = []
     for sib in header.find_next_siblings():
         if sib.name in ("h2", "h3", "h4"):
             break
         txt = sib.get_text(separator=" ", strip=True)
-        if txt:
-            blocks.append(txt)
+        if not txt:
+            continue
+
+        # Split on periods (or question marks/exclamations)
+        sentences = re.split(r'(?<=[\.\?\!])\s+', txt)
+        for s in sentences:
+            s = s.strip()
+            if s:
+                blocks.append(s)
     return blocks
 
 async def enrich_architectures(skip: int, top: int) -> List[Dict[str, Any]]:
