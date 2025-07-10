@@ -4,10 +4,19 @@ from typing import List, Dict, Any
 from app.scraper.architecture_finder import fetch_architecture_objects
 from app.services.architecture_service import store_architectures, get_architectures
 from pymongo.errors import BulkWriteError
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="Azure Architecture Scraper",
     version="0.1.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # or ["*"] for quick’n’dirty
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.post("/architectures", summary="Fetch a page of Azure architectures")
