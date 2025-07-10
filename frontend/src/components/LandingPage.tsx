@@ -2,6 +2,8 @@ interface Props {
   onStart: () => void
 }
 
+// Landing page (no real use but I liked it so I kept it)
+
 export default function LandingPage({ onStart }: Props) {
   return (
     <section className='flex-grow flex flex-col items-center justify-center text-center px-4'>

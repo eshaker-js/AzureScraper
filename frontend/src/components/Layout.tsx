@@ -4,6 +4,10 @@ interface LayoutProps {
   children: ReactNode;
 }
 
+
+
+// This component is just the wrapper for the frontend 
+
 export default function Layout( {children}: LayoutProps) {
   return (
     <main className='min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col'>

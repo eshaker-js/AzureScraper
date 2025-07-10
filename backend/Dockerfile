@@ -1,15 +1,13 @@
 FROM python:3.11-slim
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies (if any)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only requirements first to leverage Docker layer caching
+# Copy only requirements first so layers are saved 
 COPY requirements.txt .
 
 # Install Python dependencies
