@@ -1,5 +1,3 @@
-# app/services/architecture_service.py
-
 from typing import List, Dict, Any
 from datetime import datetime, timezone
 
@@ -8,12 +6,7 @@ from pymongo.errors import BulkWriteError
 from app.db import architectures  # your Motor collection
 
 
-async def store_architectures(items: List[Dict[str, Any]]) -> int:
-    """
-    Upserts the given architecture items into MongoDB, adding a fetched_at timestamp.
-    De-duplicates on the `url` field.
-    Returns the number of newly inserted documents.
-    """
+async def store_architectures(items: List[Dict[str, Any]]) -> int: # Insert new architecture objects, ignore duplicates
     if not items:
         return 0
 
@@ -33,7 +26,7 @@ async def store_architectures(items: List[Dict[str, Any]]) -> int:
     return result.upserted_count
 
 
-async def get_architectures(skip: int = 0, limit: int = None) -> List[Dict[str, Any]]:
+async def get_architectures(skip: int = 0, limit: int = None) -> List[Dict[str, Any]]: # Default to returning all the rows in the database
     cursor = architectures.find({})
     if skip:
         cursor = cursor.skip(skip)
@@ -44,11 +37,10 @@ async def get_architectures(skip: int = 0, limit: int = None) -> List[Dict[str, 
         total = await architectures.count_documents({})
         docs = await cursor.to_list(length=total)
 
-    # Convert each doc’s ObjectId to str
     sanitized = []
     for d in docs:
-        d["id"] = str(d["_id"])  # create a string ID
-        d.pop("_id", None)  # remove the original ObjectId
+        d["id"] = str(d["_id"])  
+        d.pop("_id", None) 
         sanitized.append(d)
 
     return sanitized

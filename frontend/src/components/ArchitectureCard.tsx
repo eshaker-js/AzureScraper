@@ -7,6 +7,8 @@ export interface ArchitectureCardProps {
   baseUrl?: string // e.g. "https://learn.microsoft.com"
 }
 
+
+// I wanted a clickable card with every architecture, I use the thumbnail that comes with the object from the Microsoft API
 export const ArchitectureCard: React.FC<ArchitectureCardProps> = ({
   architecture,
   baseUrl = "",
@@ -49,7 +51,7 @@ export const ArchitectureCard: React.FC<ArchitectureCardProps> = ({
         no-underline
       '
     >
-      {/* Thumbnail as a small inset */}
+      {/* Thumbnail */}
       <div className='w-full h-32 overflow-hidden flex-shrink-0'>
         <img
           src={thumbSrc}
