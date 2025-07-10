@@ -2,7 +2,7 @@
 import { useState } from "react"
 import type { Architecture } from "../types/architecture"
 
-const API = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000"
+const API =  "http://localhost:8000"
 
 export default function Dashboard({ onBack }: { onBack: () => void }) {
   const [items, setItems] = useState<Architecture[]>([])
