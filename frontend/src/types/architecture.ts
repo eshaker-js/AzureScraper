@@ -8,6 +8,7 @@ export interface Architecture {
   last_modified: string
   locale: string
   products: string[]
+  useCases: string []
   display_products: string[]
   url: string
   fetched_at: string

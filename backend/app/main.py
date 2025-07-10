@@ -1,11 +1,13 @@
 # backend/app/main.py
 from fastapi import FastAPI, Query, HTTPException
 from typing import List, Dict, Any
-from app.scraper.architecture_finder import fetch_architecture_objects
+from app.scraper.run_scraper import enrich_architectures
 from app.services.architecture_service import store_architectures, get_architectures
 from pymongo.errors import BulkWriteError
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import os
+from app.db import architectures  
 
 app = FastAPI(
     title="Azure Architecture Scraper",
@@ -22,18 +24,22 @@ app.add_middleware(
 )
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup logic
+    # Create a unique index on `url` so upserts never create duplicates
+    await architectures.create_index("url", unique=True)
+    yield
+
 @app.post("/architectures", summary="Fetch a page of Azure architectures")
 async def scrape_architectures(
     skip: int = Query(0, ge=0, description="How many items to skip"),
     top: int = Query(5, ge=1, le=100, description="How many items to fetch"),
 ):
-    """
-    Uses $skip/$top to page through the Learn API.
-    """
     try:
-        results: List[Dict[str, Any]] = await fetch_architecture_objects(skip, top)
-        next_skip = skip + len(results)
-        inserted = await store_architectures(results)
+        enriched: List[Dict[str, Any]] = await enrich_architectures(skip, top)
+        next_skip = skip + len(enriched)
+        inserted = await store_architectures(enriched)
 
     except BulkWriteError as bwe:
         # catch duplicate‐key or other bulk‐write issues
@@ -45,7 +51,7 @@ async def scrape_architectures(
     return {
         "status": "loaded",
         "inserted": inserted,
-        "next": f"/architectures?skip={skip+len(results)}&top={top}",
+        "next": f"/architectures?skip={next_skip}&top={top}",
     }
 
 

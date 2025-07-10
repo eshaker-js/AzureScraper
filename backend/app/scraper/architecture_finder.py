@@ -23,17 +23,3 @@ async def fetch_architecture_objects(skip: int, top: int) -> List[Dict[str, Any]
         # print(json.dumps(payload, indent=2))
         return payload.get("results", [])
 
-async def main():
-    results = await fetch_architecture_objects(0)
-    print(f"\n✅ Fetched {len(results)} items\n")
-
-    # Option A: dump the entire list at once
-    #print(json.dumps(results, indent=2))
-
-
-    for obj in results:
-        print(json.dumps(obj, indent=2))
-        print("-" * 40)
-
-if __name__ == "__main__":
-    asyncio.run(main())

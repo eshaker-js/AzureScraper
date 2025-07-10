@@ -1,1 +1,0 @@
-from .architecture_finder import fetch_architecture_objects
