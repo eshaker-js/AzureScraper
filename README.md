@@ -1,8 +1,8 @@
 # Azure Architecture Scraper
 
-This is my submission of the Azure Architecture Scraper assignment as part of a job application to CloudCulate.
+This is my submission of the Azure Cloud Architecture Scraper assignment as part of a job application.
 
-Tech Stack is according to the requirements, but heres the specifics:
+Tech Stack was chosen according to the requirements, but here are the specifics:
 
 - Backend - FastAPI + Python
 - Frontend - React + Vite
@@ -38,9 +38,9 @@ Tech Stack is according to the requirements, but heres the specifics:
 ### 1. Finding the API  
 After a quick read of the requirements for the assignment, I visited the "Browse Azure Architectures" page on Learn Microsoft.  
 After some tinkering in the DevTools I found the API request that fetches all the architectures featured.  
-At first I struggled hitting the API endpoint directly so I tried using Selenium and Playwright (for session cookies and headers), but eventually figured out what I was doing wrong and managed to go straight to the source.  
+At first I struggled hitting the API endpoint directly so I tried using Selenium and Playwright (for session cookies and headers), but eventually figured out what I was doing wrong and managed to go straight to the source (the api endpoint).  
 
-The payload I got back is very informative, includes:
+The payload I got back was very informative, includes:
 
 - Title  
 - Summary  
@@ -54,8 +54,12 @@ To enrich the architecture data, I tried visiting each url I got back in the pay
 This was difficult due to inconsistent HTML structure..  
 The pages sometimes used paragaraphs, sometimes li (list) elements for normal sentences.
 In general the flow of each architecture page was different, which made it difficult to come up with a "one size fits all" solution. 
-In the end after looking at the requirements, the quote  "the best cloud
-architecture solutions for their use case" stood out to me, so I decided to scrape the **Potential Use Cases** section that was frequently featured in those individual articles.  
+In the end after looking at the requirements, the quote  
+  
+  _"Organizations spend millions on cloud infrastructure but struggle to find the best cloud
+architecture solutions for their use case."_   
+  
+  stood out to me, so I decided to scrape the **Potential Use Cases** section that was frequently featured in those individual articles.  
 
   
   Somtimes that section didn't exist, which made me consider the AI hint in the assignment document, however, I didn't want to use a paid 3rd party LLM, I experimented with HuggingFace transofmers and other local LLMs, but the results were unimpressive to say the least..  
