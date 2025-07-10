@@ -3,10 +3,11 @@
 This is my submission of the Azure Architecture Scraper assignment as part of a job application to CloudCulate.
 
 Tech Stack is according to the requirements, but heres the specifics:
-Backend - FastAPI + Python
-Frontend - React + Vite
-Database - MongoDB
-DevOps - Docker + Docker Compose
+
+- Backend - FastAPI + Python
+- Frontend - React + Vite
+- Database - MongoDB
+- DevOps - Docker + Docker Compose
 
 
 
@@ -51,7 +52,7 @@ The payload I got back is very informative, includes:
 ### 2. Scraping Detail Pages  
 To enrich the architecture data, I tried visiting each url I got back in the payload with hopes of learning more about the architecture.  
 This was difficult due to inconsistent HTML structure..  
-The pages sometimes used paragaraphs, sometimes li (list) elements for normal setneces.
+The pages sometimes used paragaraphs, sometimes li (list) elements for normal sentences.
 In general the flow of each architecture page was different, which made it difficult to come up with a "one size fits all" solution. 
 In the end after looking at the requirements, the quote  "the best cloud
 architecture solutions for their use case" stood out to me, so I decided to scrape the **Potential Use Cases** section that was frequently featured in those individual articles.  
