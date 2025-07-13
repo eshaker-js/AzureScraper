@@ -17,7 +17,7 @@ Tech Stack was chosen according to the requirements, but here are the specifics:
 
    ```bash
    git clone https://github.com/eshaker-js/AzureScraper.git
-   cd azure-architecture-scraper
+   cd AzureScraper
    ```
 
 2. **Start with Docker Compose**
